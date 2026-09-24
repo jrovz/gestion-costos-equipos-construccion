@@ -105,7 +105,7 @@ Salida reproducible: `data/processed/pronostico_equipos.csv`. Detalle completo, 
 
 ## Futuros ajustes o mejoras
 
-- **Agente de IA (Fase 4):** todavía no construido. El diseño ya está definido (herramientas: consultar resumen de relación insumo-equipo, consultar pronóstico, búsqueda web para contexto de mercado externo; memoria conversacional) y la arquitectura ya prevé dónde alojarlo (Azure OpenAI Service + Azure Container Apps).
+- **Agente de IA (Fase 4):** construido y probado de punta a punta con Azure OpenAI real (herramientas: consultar resumen de relación insumo-equipo, consultar pronóstico, consultar histórico, búsqueda web para contexto de mercado externo; memoria conversacional) — ver `app/`. La interfaz de consumo pasó de una web propia a **Telegram**: la arquitectura aloja el agente en la misma Azure Functions App, como el webhook del bot, sin necesitar hospedar una interfaz aparte. Falta crear el bot real en Telegram y desplegar.
 - **Despliegue real de la arquitectura en Azure:** por ahora es solo diseño y documentación (`infra/`). El despliegue mínimo real queda pendiente de confirmación explícita, dado que implica aprovisionar recursos en una suscripción de Azure real.
 - **Diccionario de datos:** si en algún momento se consigue saber qué materia prima real es `X`/`Y`/`Z` y qué equipo real es `Equipo1`/`Equipo2`, se podría validar la interpretación de negocio de los hallazgos (por ejemplo, confirmar por qué `Y` se comporta como una lista de precios indexada en vez de una cotización de mercado).
 - **Backtesting más amplio:** el actual usa 18 orígenes dentro de ~2 años de prueba; más historia y más orígenes robustecerían la elección de horizonte y método.

@@ -70,13 +70,15 @@ Términos técnicos usados en el proyecto, explicados en lenguaje simple y, cuan
 
 **Azure Blob Storage** — Servicio de almacenamiento de archivos en la nube. En la arquitectura propuesta, guarda los datos crudos, procesados, el modelo entrenado y los reportes.
 
-**Azure Functions (Consumption plan)** — Servicio que ejecuta código bajo demanda (por ejemplo, una vez al día) sin mantener un servidor prendido todo el tiempo. Incluye una cuota gratuita mensual que cubre el uso esperado de este proyecto. Es donde vive todo el cómputo de la arquitectura propuesta (ingesta, limpieza, pronóstico y la API de resultados).
+**Azure Functions (Consumption plan)** — Servicio que ejecuta código bajo demanda (por ejemplo, una vez al día, o cada vez que llega un mensaje de Telegram) sin mantener un servidor prendido todo el tiempo. Incluye una cuota gratuita mensual que cubre el uso esperado de este proyecto. Es donde vive todo el cómputo de la arquitectura propuesta (ingesta, limpieza, pronóstico y el webhook del agente).
 
-**Azure Key Vault** — Bóveda para guardar contraseñas y credenciales de forma segura, en vez de dejarlas escritas en el código.
+**Azure Key Vault** — Bóveda para guardar contraseñas y credenciales de forma segura (incluido el token del bot de Telegram), en vez de dejarlas escritas en el código.
 
-**Azure Cosmos DB (nivel gratuito)** — Base de datos de documentos donde quedan los resultados listos para consultar rápido (resumen de relación insumo-equipo, pronóstico), en vez de leer un CSV cada vez. Azure ofrece 1.000 RU/s y 25GB gratis por cuenta, sin límite de tiempo.
+**Azure Cosmos DB (nivel gratuito)** — Base de datos de documentos donde quedan los resultados listos para consultar rápido (resumen de relación insumo-equipo, pronóstico, y el historial de cada conversación de Telegram), en vez de leer un CSV cada vez. Azure ofrece 1.000 RU/s y 25GB gratis por cuenta, sin límite de tiempo.
 
 **CI/CD** — Automatizar el proceso de probar y desplegar código cada vez que se actualiza el repositorio. En la arquitectura propuesta se usa GitHub Actions, que es gratuito.
+
+**Webhook** — Una forma de que un servicio (Telegram) le avise a otro (nuestra Azure Function) apenas pasa algo, llamándolo directamente, en vez de que el segundo esté preguntando todo el rato "¿hay algo nuevo?" (eso último se llama *polling*, y es lo que usa el prototipo local del agente para no necesitar una dirección pública en internet).
 
 **Microsoft Entra ID** — Servicio que controla quién puede acceder a qué recursos dentro de Azure.
 
