@@ -6,6 +6,7 @@ convencional (ver SYSTEM_PROMPT y app/README.md).
 """
 import json
 import os
+import sys
 
 from dotenv import load_dotenv
 from openai import AzureOpenAI
@@ -27,7 +28,10 @@ Reglas importantes:
   contexto de mercado externo) y quien te pregunta no te lo dio, preguntaselo primero -- nunca
   te lo inventes ni asumas uno.
 - Si te preguntan por contexto de mercado, usa buscar_contexto_mercado con un termino real de
-  producto, y deja claro que es informacion externa (no del dataset del proyecto).
+  producto, y deja claro que es informacion externa (no del dataset del proyecto). Si quien
+  pregunta te da el nombre real de un insumo (ej. "es el cemento"), tratalo como un supuesto
+  que ellos aportan, no como algo que el dataset o la Fase 2 confirmaron -- nunca digas "en la
+  Fase 2 detectamos que Z es cemento", di algo como "asumiendo que Z es cemento, segun la Fase 2...".
 - Si te preguntan que diferencia hay entre vos y un modelo de IA convencional: el modelo VECM de
   la Fase 3 es IA convencional -- recibe datos y devuelve un numero fijo, sin decidir nada por su
   cuenta. Vos sos distinto porque decidis que herramienta usar segun la pregunta (autonomia),
@@ -65,7 +69,6 @@ def ejecutar_turno(mensajes: list[dict]) -> list[dict]:
             messages=mensajes,
             tools=TOOLS,
             tool_choice="auto",
-            temperature=0.2,
         )
         mensaje = respuesta.choices[0].message
 
@@ -89,6 +92,12 @@ def ejecutar_turno(mensajes: list[dict]) -> list[dict]:
 
 
 if __name__ == "__main__":
+    import io
+
+    # consola de Windows en cp1252: sin esto, una respuesta con cierto caracter
+    # Unicode (comillas tipograficas, guiones largos) revienta el print()
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+
     mensajes = [{"role": "system", "content": SYSTEM_PROMPT}]
     print("Agente listo (Ctrl+C o 'salir' para terminar).\n")
     while True:
