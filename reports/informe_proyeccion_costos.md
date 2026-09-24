@@ -72,4 +72,4 @@ El intervalo de confianza **no** sale de la fórmula interna del VECM (que asume
 
 ## Salida para las siguientes fases
 
-`data/processed/pronostico_equipos.csv` — pronóstico diario hasta el horizonte elegido por equipo, con el punto de control final y su banda de incertidumbre. Es el insumo directo de la tabla `pronostico_equipos` ya prevista en la arquitectura de Azure, y lo que el Agente de IA (Fase 4) va a consultar cuando le pregunten por el costo esperado de un equipo.
+`data/processed/pronostico_equipos.csv` — pronóstico diario hasta el horizonte elegido por equipo, con el punto de control final y su banda de incertidumbre. Es el insumo directo del contenedor `pronostico_equipos` de Cosmos DB ya previsto en la arquitectura de Azure, y lo que el Agente de IA (Fase 4) va a consultar cuando le pregunten por el costo esperado de un equipo.

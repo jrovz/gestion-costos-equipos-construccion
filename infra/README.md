@@ -13,6 +13,8 @@ Esta es la segunda versión del diseño, ajustada por dos motivos:
 
 Cambios respecto a la primera versión: se reemplazó Azure Data Factory + Azure Container Apps Jobs (dos servicios de cómputo distintos) por **una sola Azure Functions App** con cuatro funciones adentro; se cambió Data Lake Storage Gen2 por **Blob Storage** normal (no se necesitan sus funciones de big data); y se quitó Power BI del alcance para no sumar un servicio que, para compartir tableros, requiere licencia Pro de pago.
 
+Cambio adicional (v3): la base de resultados pasó de Azure SQL Database a **Azure Cosmos DB**, ambas gratuitas — el motivo no es de costo sino práctico: `Microsoft.DocumentDB` (el proveedor de Cosmos DB) ya está registrado en la suscripción de Azure que se va a usar para el despliegue real (por otros proyectos), mientras que `Microsoft.Sql` no — un paso menos de fricción al desplegar.
+
 ## Componentes, mapeados a lo que pide el caso
 
 El caso pide que la arquitectura soporte: *ingesta y almacenamiento de datos, procesamiento analítico, ejecución del modelo y exposición de resultados*.
@@ -32,9 +34,14 @@ El plan **Consumption** de Azure Functions incluye una cuota gratuita mensual (1
 
 Mismo esquema de carpetas que ya tiene este repo: `raw/` (copia fiel de la fuente), `processed/` (salidas de limpieza y análisis), `models/` (artefactos del pronóstico) y `reports/` (figuras e informes). Se usa Blob Storage estándar en vez de Data Lake Storage Gen2 porque no se necesita namespace jerárquico ni permisos a nivel de carpeta para este proyecto. Los primeros ~5GB son gratis durante 12 meses; después, dado que el dataset pesa unos pocos MB, el costo es de centavos de dólar al mes.
 
-### Resultados — Azure SQL Database (nivel gratuito)
+### Resultados — Azure Cosmos DB (nivel gratuito)
 
-Tablas consultables (`resumen_relacion_materias_primas_equipos`, `pronostico_equipos`) para no depender de leer CSVs en cada consulta. Azure ofrece **una base de datos gratis por suscripción** (hasta 32GB de almacenamiento y 100.000 vCore-segundos de cómputo al mes) — alcanza de sobra para el volumen de este proyecto.
+Dos contenedores documentales en vez de tablas relacionales, para no depender de leer CSVs en cada consulta:
+
+- `resumen_relacion` — un documento por combinación materia prima–equipo (particionado por `equipo`), equivalente a `resumen_relacion_materias_primas_equipos.csv`.
+- `pronostico_equipos` — un documento por fecha pronosticada (particionado por `equipo`), equivalente a `pronostico_equipos.csv`.
+
+Azure ofrece **1.000 RU/s y 25GB de almacenamiento gratis por cuenta, sin límite de tiempo** (a diferencia del storage, que solo es gratis 12 meses) — de sobra para el volumen de este proyecto. Se prefirió sobre Azure SQL Database porque el patrón de acceso (leer un documento pequeño por clave `equipo`) encaja igual de bien con un modelo de documentos, y porque el proveedor de Cosmos DB ya está habilitado en la cuenta de Azure que se va a usar (ver "Por qué esta versión" arriba).
 
 ### Consumo
 
@@ -54,7 +61,7 @@ También elegidos por su nivel gratuito:
 
 ## Costo estimado total
 
-**~$0/mes** dentro del uso esperado de este proyecto: todo el cómputo y la base de datos caen dentro de niveles siempre-gratuitos de Azure, y el storage es gratis los primeros 12 meses (después, centavos). El único gasto real de todo el diseño es el Agente de IA de la Fase 4, que paga por uso de tokens — y aun así, mínimo para una demo.
+**~$0/mes** dentro del uso esperado de este proyecto: el cómputo (Functions) y la base de datos (Cosmos DB) caen dentro de niveles siempre-gratuitos de Azure, y el storage es gratis los primeros 12 meses (después, centavos). El único gasto real de todo el diseño es el Agente de IA de la Fase 4, que paga por uso de tokens — y aun así, mínimo para una demo.
 
 ## Qué queda pendiente
 

@@ -74,7 +74,7 @@ Términos técnicos usados en el proyecto, explicados en lenguaje simple y, cuan
 
 **Azure Key Vault** — Bóveda para guardar contraseñas y credenciales de forma segura, en vez de dejarlas escritas en el código.
 
-**Azure SQL Database (nivel gratuito)** — Base de datos donde quedan las tablas de resultados listas para consultar rápido (resumen de relación insumo-equipo, pronóstico). Azure ofrece una gratis por suscripción.
+**Azure Cosmos DB (nivel gratuito)** — Base de datos de documentos donde quedan los resultados listos para consultar rápido (resumen de relación insumo-equipo, pronóstico), en vez de leer un CSV cada vez. Azure ofrece 1.000 RU/s y 25GB gratis por cuenta, sin límite de tiempo.
 
 **CI/CD** — Automatizar el proceso de probar y desplegar código cada vez que se actualiza el repositorio. En la arquitectura propuesta se usa GitHub Actions, que es gratuito.
 

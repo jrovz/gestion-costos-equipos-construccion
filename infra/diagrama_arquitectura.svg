@@ -8,7 +8,7 @@
   <rect x="0" y="0" width="1480" height="1000" fill="#ffffff"/>
 
   <text x="30" y="34" font-size="22" font-weight="700" fill="#1a1a1a">Arquitectura propuesta en Azure — diseno de costo minimo</text>
-  <text x="30" y="56" font-size="13" fill="#605e5c">Version 2: consolidada en Azure Functions + niveles gratuitos, pensada para explicarse en una entrevista junior</text>
+  <text x="30" y="56" font-size="13" fill="#605e5c">Version 3: Azure Functions + Cosmos DB, consolidada en niveles gratuitos, pensada para explicarse en una entrevista junior</text>
 
   <!-- Column headers -->
   <text x="115" y="92" font-size="12.5" font-weight="700" fill="#6b6b6b" text-anchor="middle">FUENTES</text>
@@ -71,11 +71,11 @@
 
   <!-- C4 Resultados -->
   <rect x="790" y="360" width="210" height="120" rx="8" fill="#fbeee6" stroke="#ca5010" stroke-width="1.5"/>
-  <text x="895" y="386" font-size="12.5" font-weight="600" fill="#201f1e" text-anchor="middle">Azure SQL Database</text>
-  <text x="895" y="404" font-size="11" fill="#ca5010" text-anchor="middle">Nivel gratuito (Free offer)</text>
-  <text x="895" y="424" font-size="11.5" fill="#484644" text-anchor="middle">tablas: resumen_relacion,</text>
+  <text x="895" y="386" font-size="12.5" font-weight="600" fill="#201f1e" text-anchor="middle">Azure Cosmos DB</text>
+  <text x="895" y="404" font-size="11" fill="#ca5010" text-anchor="middle">Nivel gratuito (para siempre)</text>
+  <text x="895" y="424" font-size="11.5" fill="#484644" text-anchor="middle">contenedores: resumen_relacion,</text>
   <text x="895" y="441" font-size="11.5" fill="#484644" text-anchor="middle">pronostico_equipos</text>
-  <text x="895" y="462" font-size="10.5" fill="#7a7a7a" text-anchor="middle">hasta 32GB y 100.000 vCore-s/mes</text>
+  <text x="895" y="462" font-size="10.5" fill="#7a7a7a" text-anchor="middle">1.000 RU/s y 25GB gratis, sin limite de tiempo</text>
 
   <!-- C5 Consumo -->
   <rect x="1050" y="400" width="220" height="105" rx="8" fill="#eaf6ea" stroke="#107c10" stroke-width="1.5"/>
@@ -114,7 +114,7 @@
   <rect x="20" y="630" width="900" height="100" rx="8" fill="#eaf6ea" stroke="#107c10" stroke-width="1.5"/>
   <text x="40" y="654" font-size="13.5" font-weight="700" fill="#0e5c0e">Costo estimado con este diseno: ~$0 / mes</text>
   <text x="40" y="674" font-size="11" fill="#28402a">- Azure Functions (Consumption): un job diario + una API de bajo trafico no se acercan a la cuota gratuita mensual.</text>
-  <text x="40" y="691" font-size="11" fill="#28402a">- Azure SQL Database: nivel gratuito (Free offer), hasta 32GB y 100.000 vCore-segundos/mes.</text>
+  <text x="40" y="691" font-size="11" fill="#28402a">- Azure Cosmos DB: nivel gratuito por cuenta, 1.000 RU/s y 25GB, sin limite de tiempo (no son 12 meses).</text>
   <text x="40" y="708" font-size="11" fill="#28402a">- Azure Blob Storage: ~5GB gratis 12 meses; despues, centavos de dolar dado el tamano del dataset.</text>
   <text x="40" y="722" font-size="11" fill="#28402a">- Unico gasto real: el Agente de IA (Fase 4) paga por token, pero el uso esperado en una demo es minimo.</text>
 
@@ -141,7 +141,7 @@
   <!-- Notas -->
   <text x="30" y="908" font-size="12.5" font-weight="700" fill="#323130">Notas de diseno</text>
   <text x="30" y="928" font-size="11" fill="#484644">- Todo el computo vive en una sola Azure Functions App (4 funciones adentro) en vez de repartirlo en Data Factory + Container Apps: menos servicios que aprender, explicar y pagar.</text>
-  <text x="30" y="946" font-size="11" fill="#484644">- Azure SQL Database usa el nivel gratuito en vez de Container Apps + Synapse: mismo resultado (tablas consultables) con cero costo fijo.</text>
+  <text x="30" y="946" font-size="11" fill="#484644">- Azure Cosmos DB en vez de Azure SQL Database: mismo resultado (datos consultables sin leer CSVs) con nivel gratuito sin limite de tiempo, y el proveedor ya esta habilitado en la cuenta de Azure a usar.</text>
   <text x="30" y="964" font-size="11" fill="#484644">- Se elimino Power BI de esta version para mantener el alcance minimo; la API ya sirve los datos si mas adelante se quiere agregar un dashboard.</text>
   <text x="30" y="982" font-size="11" fill="#484644">- Este diagrama sigue siendo un borrador para validar contigo; no implica ningun recurso desplegado todavia.</text>
 

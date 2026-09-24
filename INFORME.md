@@ -37,7 +37,7 @@ En cada etapa hubo más de un camino posible; esta es la opción tomada y por qu
 
 **Horizonte de predicción:** se pudo fijar arbitrariamente (p. ej. 12 meses parejo para ambos equipos). Se optó por dejar que el error histórico de backtesting a 1, 3 y 6 meses determinara hasta dónde el modelo sigue aportando sobre no pronosticar, lo que llevó a horizontes distintos por equipo (ver "Proyección de costos" abajo).
 
-**Arquitectura cloud:** se consideró una arquitectura tipo Data Factory + Databricks/Container Apps + SQL de pago — se descartó por sobredimensionada para el volumen real de datos del caso (miles de filas, unos pocos MB) y por priorizar minimizar costo y mantener la solución explicable por un perfil junior. Se optó por consolidar todo el cómputo en una sola Azure Functions App (Consumption, con cuota gratuita mensual) y usar Azure SQL Database en su nivel gratuito.
+**Arquitectura cloud:** se consideró una arquitectura tipo Data Factory + Databricks/Container Apps + SQL de pago — se descartó por sobredimensionada para el volumen real de datos del caso (miles de filas, unos pocos MB) y por priorizar minimizar costo y mantener la solución explicable por un perfil junior. Se optó por consolidar todo el cómputo en una sola Azure Functions App (Consumption, con cuota gratuita mensual) y usar Azure Cosmos DB en su nivel gratuito (1.000 RU/s y 25GB, sin límite de tiempo).
 
 ## Resultados del análisis de los datos y los modelos
 
