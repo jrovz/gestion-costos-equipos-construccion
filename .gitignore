@@ -6,3 +6,6 @@ __pycache__/
 venv/
 .env
 app/.env
+functions/local.settings.json
+functions/.python_packages/
+functions/src/

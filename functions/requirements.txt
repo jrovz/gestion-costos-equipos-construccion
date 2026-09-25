@@ -1,0 +1,16 @@
+azure-functions
+azure-storage-blob
+azure-cosmos
+azure-identity
+azure-keyvault-secrets
+
+pandas
+numpy
+statsmodels
+scikit-learn
+shap
+
+openai
+requests
+python-dotenv
+ddgs
