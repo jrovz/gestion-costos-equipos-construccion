@@ -11,3 +11,4 @@ openai
 streamlit
 python-dotenv
 ddgs
+requests

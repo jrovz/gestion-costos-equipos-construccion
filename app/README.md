@@ -1,6 +1,6 @@
 # Agente de IA — Fase 4
 
-Expone los hallazgos de las Fases 1-3 en un chat conversacional: qué materia prima explica a cada equipo, el pronóstico con su incertidumbre, e información de mercado externa cuando se le pide.
+Expone los hallazgos de las Fases 1-3 en un chat conversacional: qué materia prima explica a cada equipo, el pronóstico con su incertidumbre, e información de mercado externa cuando se le pide. También va a poder recibir precios nuevos por el mismo chat (ver "Qué puede responder").
 
 ## Cómo correrlo
 
@@ -17,6 +17,10 @@ Expone los hallazgos de las Fases 1-3 en un chat conversacional: qué materia pr
    ```bash
    python agente.py
    ```
+   O, para probar por Telegram (ver la sección de abajo para crear el bot primero):
+   ```bash
+   python telegram_bot.py
+   ```
 
 ## Qué puede responder
 
@@ -25,6 +29,7 @@ Expone los hallazgos de las Fases 1-3 en un chat conversacional: qué materia pr
 - "¿Cómo se ha movido el precio de Equipo1 el último mes?" → `consultar_historico`
 - "¿Qué está pasando en el mercado de [producto real]?" → `buscar_contexto_mercado` — si no le das el nombre real del producto, te lo va a preguntar primero, porque el proyecto no tiene diccionario de datos y no sabe a qué materia prima real corresponden `X`, `Y`, `Z` (ver `../GLOSARIO.md`).
 - "¿Qué diferencia hay entre vos y el modelo que hizo el pronóstico?" → lo explica él mismo (ver abajo).
+- "X = 87.32" (o similar) → `registrar_precio_insumo` **(planeada, todavía no implementada)** — la fecha la pone el servidor, no quien escribe ni el modelo; valida el salto contra el último precio conocido (mismo umbral del 15% de la Fase 1) antes de guardarlo. Ver `../infra/README.md`.
 
 ## IA convencional vs. Agente de IA — aplicado a este proyecto
 
@@ -43,20 +48,26 @@ Este proyecto tiene ejemplos concretos de los dos, uno al lado del otro:
 
 | Archivo | Contenido |
 |---|---|
-| `tools.py` | Las 4 herramientas (leen `data/processed/*.csv` o hacen búsqueda web) y sus esquemas para function calling |
+| `tools.py` | Las 4 herramientas actuales (leen `data/processed/*.csv` o hacen búsqueda web) y sus esquemas para function calling — falta agregar `registrar_precio_insumo` |
 | `agente.py` | El loop conversacional: llama al modelo, ejecuta las tool calls que pida, hasta que responde en texto. Sin frameworks — el mecanismo queda a la vista |
 | `ui_streamlit.py` | La interfaz de chat para probar/depurar local |
-| `.env.example` | Plantilla de variables de entorno (credenciales de Azure OpenAI) |
+| `telegram_bot.py` | Prototipo local del bot de Telegram (*long polling*) — la interfaz real de consumo |
+| `.env.example` | Plantilla de variables de entorno (credenciales de Azure OpenAI y token de Telegram) |
 
-## Telegram — la interfaz real de consumo (próximo paso)
+## Telegram — la interfaz real de consumo
 
-Streamlit fue la interfaz para construir y probar el agente; la interfaz con la que el evaluador va a hablar de verdad es **Telegram** — así quedó decidido con el diseño de arquitectura (`../infra/README.md`).
+Streamlit fue la interfaz para construir y probar el agente; la interfaz con la que el evaluador va a hablar de verdad es **Telegram** — así quedó decidido con el diseño de arquitectura (`../infra/README.md`). `telegram_bot.py` reutiliza el mismo `ejecutar_turno()` de `agente.py` tal cual — no hay lógica nueva del agente, solo una capa de entrada/salida distinta.
 
-No cambia nada de `agente.py` ni `tools.py` — el mismo `ejecutar_turno()` que ya probamos con Azure OpenAI real se reutiliza tal cual. Lo que cambia es la capa de entrada/salida:
+**Cómo crear el bot y probarlo:**
 
-- **Prototipo local (pendiente de construir)**: `app/telegram_bot.py`, usando *long polling* (el bot le pregunta a Telegram "¿hay mensajes nuevos?" en un loop) — no necesita URL pública, corre igual de simple que `python agente.py`. Memoria en un diccionario `{chat_id: [mensajes]}` mientras el proceso vive, igual que hace `ui_streamlit.py` con `st.session_state`.
-- **Producción (Azure)**: la misma lógica, pero como *webhook* — Telegram llama directo a una Azure Function HTTP cuando hay un mensaje nuevo, en vez de que el bot esté preguntando todo el rato. La memoria pasa de un diccionario en RAM al contenedor `conversaciones` de Cosmos DB, porque una Function no mantiene estado entre invocaciones.
-- Requiere crear el bot hablando con `@BotFather` en Telegram (nombre + token) — es el único paso manual que solo puede hacer quien tiene la cuenta de Telegram.
+1. En Telegram, buscar `@BotFather` y mandarle `/newbot`. Elegir un nombre y un usuario (debe terminar en `bot`, ej. `costos_equipos_bot`).
+2. BotFather devuelve un token (`123456:ABC-...`) — copiarlo a `TELEGRAM_BOT_TOKEN` en `app/.env`.
+3. Correr `python telegram_bot.py` — queda escuchando mensajes (*long polling*, no necesita URL pública ni abrir puertos).
+4. Buscar el bot por su usuario dentro de Telegram y escribirle — las respuestas del agente llegan por el mismo chat.
+
+**Diferencia con producción (Azure)**: acá el bot le pregunta a Telegram "¿hay mensajes nuevos?" en un loop (*polling*) y guarda la memoria en un diccionario `{chat_id: [mensajes]}` mientras el proceso vive. En Azure sería al revés — Telegram llama directo a una Function (*webhook*) cada vez que hay un mensaje nuevo, y la memoria vive en el contenedor `conversaciones` de Cosmos DB en vez de en RAM, porque una Function no mantiene estado entre invocaciones. El agente en sí (`agente.py`, `tools.py`) no cambia entre un modo y otro.
+
+Falta agregar `registrar_precio_insumo` a `tools.py` (ver "Qué puede responder" arriba) — el bot ya funciona para consultas, ese es el siguiente paso.
 
 ## Limitaciones conocidas
 
