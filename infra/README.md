@@ -1,6 +1,6 @@
 # Arquitectura propuesta — Azure (diseño de costo mínimo)
 
-Diseño y documentación del entregable "Arquitectura propuesta en la nube" del caso. Es un **borrador de diseño**: por ahora no se despliega ningún recurso real en Azure, solo se documenta cómo se vería la solución completa en producción. El despliegue mínimo real queda para una siguiente etapa, una vez validado este planteamiento.
+Diseño y documentación del entregable "Arquitectura propuesta en la nube" del caso. **Ya desplegado**: los recursos descritos abajo existen de verdad en Azure (Functions, Cosmos DB, Blob Storage, Key Vault) y el webhook de Telegram está en producción — el código del despliegue vive en `../functions/`.
 
 ![Arquitectura propuesta en Azure](diagrama_arquitectura.svg)
 
@@ -81,8 +81,6 @@ También elegidos por su nivel gratuito:
 
 ## Qué queda pendiente
 
-- Validar este planteamiento contigo antes de pasarlo al informe.
-- Crear el bot en Telegram (hablar con `@BotFather`, elegir nombre y obtener el token) — es un paso manual tuyo, nadie más puede hacerlo por vos.
-- Decidir y construir el control de acceso de `registrar_precio_insumo` (lista de `chat_id` autorizados) antes de desplegar — sin eso, cualquiera podría escribirle al bot un precio falso.
+- Implementar `registrar_precio_insumo` en `tools.py` — el bot ya funciona para consultas, pero la ingesta conversacional de precios sigue solo diseñada, no construida.
+- Decidir y construir el control de acceso de `registrar_precio_insumo` (lista de `chat_id` autorizados) antes de habilitarla — sin eso, cualquiera podría escribirle al bot un precio falso.
 - Revisar si conviene acotar el uso de tokens de Azure OpenAI (ej. límites de contexto, cachear respuestas) para mantener ese único costo lo más bajo posible.
-- Despliegue mínimo real (ej. la Function App + Blob Storage + registrar el webhook con Telegram) para capturar el punto adicional que ofrece el caso por resolverlo en una nube — pendiente de tu confirmación, ya que implica usar una suscripción de Azure real.

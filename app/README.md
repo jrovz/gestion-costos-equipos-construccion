@@ -73,4 +73,4 @@ Falta agregar `registrar_precio_insumo` a `tools.py` (ver "Qué puede responder"
 
 - No hay diccionario de datos: el agente no puede nombrar la materia prima real detrás de `X`, `Y`, `Z` — solo puede describir su comportamiento estadístico (ver `GLOSARIO.md` e `INFORME.md`).
 - La búsqueda web (`buscar_contexto_mercado`) usa un motor gratuito sin API key — resultados razonables para una demo, pero menos robustos que una API de búsqueda dedicada (ver alternativas en `../infra/README.md`).
-- Corre en local por ahora; el despliegue en Azure (Functions + Azure OpenAI, con Telegram como interfaz) está en el diseño de `../infra/` pero no se ha desplegado todavía.
+- Ya desplegado en Azure (Functions + Azure OpenAI, con Telegram como interfaz) — ver `../functions/` y `../infra/README.md`.

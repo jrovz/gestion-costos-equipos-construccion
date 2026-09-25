@@ -8,7 +8,7 @@ Términos técnicos usados en el proyecto, explicados en lenguaje simple y, cuan
 
 **Equipo (Equipo1, Equipo2)** — Los dos tipos de maquinaria crítica que la constructora debe comprar durante el proyecto; su precio de adquisición es la variable que se quiere explicar y proyectar. No se sabe qué maquinaria real son (no hay diccionario de datos).
 
-**Fase** — Cada etapa del proyecto: Fase 1 (limpieza de datos), Fase 2 (qué materia prima explica a cada equipo), Fase 3 (proyección de costos), Fase 4 (Agente de IA, pendiente).
+**Fase** — Cada etapa del proyecto: Fase 1 (limpieza de datos), Fase 2 (qué materia prima explica a cada equipo), Fase 3 (proyección de costos), Fase 4 (Agente de IA, desplegado en Azure con Telegram como interfaz).
 
 **Horizonte de predicción** — Hasta cuántos días/meses hacia adelante se pronostica. No es el mismo para los dos equipos en este proyecto: se determinó con backtesting, no se fijó de antemano.
 

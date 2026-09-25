@@ -2,7 +2,7 @@
 
 Prueba técnica de Ciencia de Datos Senior. Este informe consolida el trabajo de las tres fases de análisis (`data/01_limpieza_datos.ipynb`, `data/02_analisis_relacion_materias_primas_equipos.ipynb`, `data/03_proyeccion_costos.ipynb`) y del diseño de arquitectura (`infra/`). Los hallazgos detallados de cada fase de análisis están en [`reports/informe_relacion_materias_primas_equipos.md`](reports/informe_relacion_materias_primas_equipos.md) y [`reports/informe_proyeccion_costos.md`](reports/informe_proyeccion_costos.md); este documento los resume y los pone en el formato que pide el caso. Para los términos técnicos usados abajo, ver [`GLOSARIO.md`](GLOSARIO.md).
 
-Estado al momento de escribir esto: el análisis de datos y la proyección de costos están completos y ejecutados de punta a punta. El Agente de IA (Fase 4) y el despliegue real de la arquitectura en Azure quedan pendientes — se explica por qué en "Futuros ajustes o mejoras".
+Estado al momento de escribir esto: las cuatro fases están completas — análisis de datos, proyección de costos, Agente de IA y despliegue real de la arquitectura en Azure (Functions, Cosmos DB, Blob Storage, Key Vault, webhook de Telegram en producción). Lo que queda pendiente (la herramienta `registrar_precio_insumo` y su control de acceso) se explica en "Futuros ajustes o mejoras".
 
 ---
 
@@ -105,8 +105,8 @@ Salida reproducible: `data/processed/pronostico_equipos.csv`. Detalle completo, 
 
 ## Futuros ajustes o mejoras
 
-- **Agente de IA (Fase 4):** construido y probado de punta a punta con Azure OpenAI real (herramientas: consultar resumen de relación insumo-equipo, consultar pronóstico, consultar histórico, búsqueda web para contexto de mercado externo; memoria conversacional) — ver `app/`. La interfaz de consumo pasó de una web propia a **Telegram**: la arquitectura aloja el agente en la misma Azure Functions App, como el webhook del bot, sin necesitar hospedar una interfaz aparte. Falta crear el bot real en Telegram y desplegar.
-- **Despliegue real de la arquitectura en Azure:** por ahora es solo diseño y documentación (`infra/`). El despliegue mínimo real queda pendiente de confirmación explícita, dado que implica aprovisionar recursos en una suscripción de Azure real.
+- **Agente de IA (Fase 4):** construido y probado de punta a punta con Azure OpenAI real (herramientas: consultar resumen de relación insumo-equipo, consultar pronóstico, consultar histórico, mostrar gráficos del análisis, búsqueda web para contexto de mercado externo; memoria conversacional) — ver `app/`. La interfaz de consumo es **Telegram**: la misma Azure Functions App aloja el agente como el webhook del bot, sin necesitar hospedar una interfaz aparte.
+- **Despliegue real de la arquitectura en Azure:** ya desplegado — Azure Functions (limpieza, pronóstico, webhook de Telegram), Cosmos DB, Blob Storage y Key Vault, ver `functions/` e `infra/`. Pendiente: implementar `registrar_precio_insumo` (ingesta conversacional de precios, diseñada en `infra/README.md` pero todavía no construida) y su control de acceso por `chat_id`.
 - **Diccionario de datos:** si en algún momento se consigue saber qué materia prima real es `X`/`Y`/`Z` y qué equipo real es `Equipo1`/`Equipo2`, se podría validar la interpretación de negocio de los hallazgos (por ejemplo, confirmar por qué `Y` se comporta como una lista de precios indexada en vez de una cotización de mercado).
 - **Backtesting más amplio:** el actual usa 18 orígenes dentro de ~2 años de prueba; más historia y más orígenes robustecerían la elección de horizonte y método.
 - **Monitoreo y reentrenamiento:** la arquitectura ya contempla un job programado (Azure Functions, Timer trigger) que reentrena antes de cada fase del proyecto; falta instrumentar alertas de *drift* — si la relación estructural insumo-equipo cambia (p. ej. cambio de proveedor), el modelo no lo detectaría solo.
