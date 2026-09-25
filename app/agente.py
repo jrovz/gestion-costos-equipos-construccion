@@ -58,16 +58,23 @@ client = AzureOpenAI(
 DEPLOYMENT = os.environ["AZURE_OPENAI_DEPLOYMENT"]
 
 
-def ejecutar_turno(mensajes: list[dict]) -> list[dict]:
+def ejecutar_turno(mensajes: list[dict], tools: list[dict] = TOOLS, dispatch: dict = DISPATCH) -> tuple[list[dict], list[str]]:
     """Corre un turno completo: llama al modelo, ejecuta las tool calls que pida
     (puede ser mas de una ronda), y devuelve la lista de mensajes actualizada con
-    la respuesta final en texto. La lista completa es la memoria de la conversacion.
+    la respuesta final en texto, mas las rutas de imagenes que se hayan pedido
+    mostrar en este turno (via mostrar_grafico) -- cada interfaz (Streamlit,
+    Telegram, CLI) decide como mostrarlas, esto solo dice "cuales".
+
+    `tools`/`dispatch` son parametros (no siempre los de tools.py) para poder
+    reusar este mismo loop con la version cloud de las herramientas
+    (functions/shared/tools_cloud.py) sin duplicar la logica del agente.
     """
+    archivos_adjuntos: list[str] = []
     while True:
         respuesta = client.chat.completions.create(
             model=DEPLOYMENT,
             messages=mensajes,
-            tools=TOOLS,
+            tools=tools,
             tool_choice="auto",
         )
         mensaje = respuesta.choices[0].message
@@ -77,8 +84,10 @@ def ejecutar_turno(mensajes: list[dict]) -> list[dict]:
             for tc in mensaje.tool_calls:
                 nombre = tc.function.name
                 args = json.loads(tc.function.arguments or "{}")
-                funcion = DISPATCH.get(nombre)
+                funcion = dispatch.get(nombre)
                 resultado = funcion(**args) if funcion else {"error": f"Herramienta desconocida: {nombre}"}
+                if nombre == "mostrar_grafico" and "ruta" in resultado:
+                    archivos_adjuntos.append(resultado["ruta"])
                 mensajes.append({
                     "role": "tool",
                     "tool_call_id": tc.id,
@@ -88,7 +97,7 @@ def ejecutar_turno(mensajes: list[dict]) -> list[dict]:
             continue  # el modelo ve los resultados y decide el siguiente paso
 
         mensajes.append({"role": "assistant", "content": mensaje.content})
-        return mensajes
+        return mensajes, archivos_adjuntos
 
 
 if __name__ == "__main__":
@@ -105,5 +114,7 @@ if __name__ == "__main__":
         if entrada.lower() in ("salir", "exit", "quit"):
             break
         mensajes.append({"role": "user", "content": entrada})
-        mensajes = ejecutar_turno(mensajes)
+        mensajes, archivos_adjuntos = ejecutar_turno(mensajes)
         print(f"\nAgente: {mensajes[-1]['content']}\n")
+        for ruta in archivos_adjuntos:
+            print(f"[imagen: {ruta}]")

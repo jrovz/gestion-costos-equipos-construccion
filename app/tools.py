@@ -8,8 +8,40 @@ import pandas as pd
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 PROCESSED_DIR = BASE_DIR / "data" / "processed"
+FIGURES_DIR = BASE_DIR / "reports" / "figures"
 
 EQUIPOS_VALIDOS = {"Equipo1", "Equipo2"}
+
+GRAFICOS_DISPONIBLES = {
+    "series_normalizadas": {
+        "archivo": "01_series_normalizadas.png",
+        "descripcion": "Las 5 series (X, Y, Z, Equipo1, Equipo2) normalizadas en base 100 desde 2010, "
+                       "para comparar su evolucion relativa.",
+    },
+    "correlacion_niveles_vs_retornos": {
+        "archivo": "02_heatmap_niveles_vs_retornos.png",
+        "descripcion": "Heatmap de correlacion de Pearson, niveles (precios crudos) vs. retornos -- "
+                       "muestra por que correlacionar precios crudos es enganoso.",
+    },
+    "correlacion_cruzada": {
+        "archivo": "03_ccf.png",
+        "descripcion": "Correlacion cruzada (CCF) entre cada materia prima y cada equipo, rezagos +-20 dias "
+                       "habiles -- muestra si algun insumo anticipa al equipo o si es todo contemporaneo.",
+    },
+    "importancia_shap": {
+        "archivo": "04_shap.png",
+        "descripcion": "Importancia SHAP (Random Forest) de cada materia prima sobre el precio de cada equipo.",
+    },
+    "comparacion_metodos_pronostico": {
+        "archivo": "05_backtest_mape.png",
+        "descripcion": "Error (MAPE) de los 4 metodos de pronostico probados (naive, media movil, ARIMA, VECM) "
+                       "por horizonte, del backtesting de la Fase 3.",
+    },
+    "proyeccion_final": {
+        "archivo": "06_proyeccion_final.png",
+        "descripcion": "Proyeccion final de precio de cada equipo con banda de incertidumbre empirica.",
+    },
+}
 
 
 def _validar_equipo(equipo: str) -> str | None:
@@ -98,6 +130,19 @@ def consultar_historico(equipo: str, dias: int = 30) -> dict:
     }
 
 
+def mostrar_grafico(nombre: str) -> dict:
+    """Devuelve la ruta de un grafico ya generado en el analisis (Fase 2 o 3), para mostrarlo en el chat."""
+    info = GRAFICOS_DISPONIBLES.get(nombre)
+    if info is None:
+        return {"error": f"'{nombre}' no es un grafico valido. Opciones: {list(GRAFICOS_DISPONIBLES)}"}
+
+    ruta = FIGURES_DIR / info["archivo"]
+    if not ruta.exists():
+        return {"error": f"El archivo {info['archivo']} no existe todavia -- falta correr el notebook que lo genera."}
+
+    return {"nombre": nombre, "ruta": str(ruta), "descripcion": info["descripcion"]}
+
+
 def buscar_contexto_mercado(termino_busqueda: str, max_resultados: int = 5) -> dict:
     """Busqueda web de contexto de mercado externo (noticias, tendencias, precios).
 
@@ -171,6 +216,24 @@ TOOLS = [
     {
         "type": "function",
         "function": {
+            "name": "mostrar_grafico",
+            "description": mostrar_grafico.__doc__,
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "nombre": {
+                        "type": "string",
+                        "enum": list(GRAFICOS_DISPONIBLES.keys()),
+                        "description": " | ".join(f"{k}: {v['descripcion']}" for k, v in GRAFICOS_DISPONIBLES.items()),
+                    },
+                },
+                "required": ["nombre"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "buscar_contexto_mercado",
             "description": buscar_contexto_mercado.__doc__,
             "parameters": {
@@ -193,5 +256,6 @@ DISPATCH = {
     "consultar_relacion_insumo_equipo": consultar_relacion_insumo_equipo,
     "consultar_pronostico": consultar_pronostico,
     "consultar_historico": consultar_historico,
+    "mostrar_grafico": mostrar_grafico,
     "buscar_contexto_mercado": buscar_contexto_mercado,
 }
