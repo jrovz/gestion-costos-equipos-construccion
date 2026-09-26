@@ -53,6 +53,8 @@ Azure ofrece **1.000 RU/s y 25GB de almacenamiento gratis por cuenta, sin límit
 
 ### Consumo — Telegram
 
+**Disponible en producción:** [@Gestion_costos_bot](https://t.me/Gestion_costos_bot).
+
 El evaluador (o el equipo de planeación financiera) habla con el bot como hablaría con cualquier contacto de Telegram — no hay una URL que visitar, ni una interfaz que mantener funcionando:
 
 - **Telegram Bot API**: gratis, sin costo por bot ni por mensaje. El bot se crea una sola vez hablando con `@BotFather` dentro de Telegram, que entrega un token — eso es lo único manual del lado de Telegram.

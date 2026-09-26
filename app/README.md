@@ -59,7 +59,9 @@ Este proyecto tiene ejemplos concretos de los dos, uno al lado del otro:
 
 Streamlit fue la interfaz para construir y probar el agente; la interfaz con la que el evaluador va a hablar de verdad es **Telegram** — así quedó decidido con el diseño de arquitectura (`../infra/README.md`). `telegram_bot.py` reutiliza el mismo `ejecutar_turno()` de `agente.py` tal cual — no hay lógica nueva del agente, solo una capa de entrada/salida distinta.
 
-**Cómo crear el bot y probarlo:**
+**El bot ya está en producción:** [@Gestion_costos_bot](https://t.me/Gestion_costos_bot) — se le puede escribir directamente, sin correr nada local.
+
+Los pasos siguientes son para crear tu propio bot de prueba y correr el prototipo local (`telegram_bot.py`), no para hablar con el bot de producción:
 
 1. En Telegram, buscar `@BotFather` y mandarle `/newbot`. Elegir un nombre y un usuario (debe terminar en `bot`, ej. `costos_equipos_bot`).
 2. BotFather devuelve un token (`123456:ABC-...`) — copiarlo a `TELEGRAM_BOT_TOKEN` en `app/.env`.

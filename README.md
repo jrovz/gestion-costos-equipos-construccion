@@ -14,7 +14,7 @@ Una constructora no puede anticipar el costo de dos equipos críticos (`Equipo1`
 - [x] **Fase 2 — Relación materia prima–equipo**: 5 métodos independientes (Engle-Granger, Johansen, correlación cruzada, Lasso/Elastic Net, Random Forest + SHAP) coinciden en que `Y` explica a `Equipo1` y `Z` explica a `Equipo2`; `X` es ruido.
 - [x] **Fase 3 — Proyección de costos**: 4 métodos comparados con backtesting real; horizonte confiable de 3 meses para `Equipo1` y 1 mes para `Equipo2`, con banda de incertidumbre empírica.
 - [x] **Fase 4 — Agente de IA**: probado de punta a punta con Azure OpenAI, con memoria conversacional, búsqueda web y gráficos del análisis; interfaz real por Telegram (prototipo local y bot en producción).
-- [x] **Arquitectura en Azure**: diseñada para costo mínimo (~$0/mes salvo el modelo de lenguaje) y **desplegada de verdad** — Azure Functions (limpieza, pronóstico y webhook de Telegram), Cosmos DB, Blob Storage y Key Vault.
+- [x] **Arquitectura en Azure**: diseñada para costo mínimo (~$0/mes salvo el modelo de lenguaje) y **desplegada de verdad** — Azure Functions (limpieza, pronóstico y webhook de Telegram), Cosmos DB, Blob Storage y Key Vault. Bot disponible en Telegram: [@Gestion_costos_bot](https://t.me/Gestion_costos_bot).
 - [ ] **Ingesta conversacional de precios** (`registrar_precio_insumo`): diseñada en `infra/README.md`, todavía no implementada en `tools.py`; falta además decidir el control de acceso por `chat_id`.
 
 Limitaciones conocidas del despliegue actual (excepciones crudas mostradas al usuario, sin validación del `secret_token` de Telegram, historial de conversaciones sin límite, sin métricas de uso) — detalle en la sección correspondiente de [`infra/README.md`](infra/README.md).
