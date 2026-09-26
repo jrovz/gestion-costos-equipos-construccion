@@ -29,7 +29,8 @@ Expone los hallazgos de las Fases 1-3 en un chat conversacional: qué materia pr
 - "¿Cómo se ha movido el precio de Equipo1 el último mes?" → `consultar_historico`
 - "¿Qué está pasando en el mercado de [producto real]?" → `buscar_contexto_mercado` — si no le das el nombre real del producto, te lo va a preguntar primero, porque el proyecto no tiene diccionario de datos y no sabe a qué materia prima real corresponden `X`, `Y`, `Z` (ver `../GLOSARIO.md`).
 - "¿Qué diferencia hay entre vos y el modelo que hizo el pronóstico?" → lo explica él mismo (ver abajo).
-- "X = 87.32" (o similar) → `registrar_precio_insumo` **(planeada, todavía no implementada)** — la fecha la pone el servidor, no quien escribe ni el modelo; valida el salto contra el último precio conocido (mismo umbral del 15% de la Fase 1) antes de guardarlo. Ver `../infra/README.md`.
+- "Muéstrame el gráfico de SHAP" (o pedir cualquier figura ya generada en la Fase 2 o 3) → `mostrar_grafico`, adjunta el PNG correspondiente de `reports/figures/`.
+- "X = 87.32" (o similar) → `registrar_precio_insumo` **(planeada, todavía no implementada)** — la fecha la pondría el servidor, no quien escribe ni el modelo; validaría el salto contra el último precio conocido (mismo umbral del 15% de la Fase 1) antes de guardarlo. Ver `../infra/README.md`.
 
 ## IA convencional vs. Agente de IA — aplicado a este proyecto
 
@@ -48,7 +49,7 @@ Este proyecto tiene ejemplos concretos de los dos, uno al lado del otro:
 
 | Archivo | Contenido |
 |---|---|
-| `tools.py` | Las 4 herramientas actuales (leen `data/processed/*.csv` o hacen búsqueda web) y sus esquemas para function calling — falta agregar `registrar_precio_insumo` |
+| `tools.py` | Las 5 herramientas actuales (leen `data/processed/*.csv`, adjuntan una figura de `reports/figures/`, o hacen búsqueda web) y sus esquemas para function calling — falta agregar `registrar_precio_insumo` |
 | `agente.py` | El loop conversacional: llama al modelo, ejecuta las tool calls que pida, hasta que responde en texto. Sin frameworks — el mecanismo queda a la vista |
 | `ui_streamlit.py` | La interfaz de chat para probar/depurar local |
 | `telegram_bot.py` | Prototipo local del bot de Telegram (*long polling*) — la interfaz real de consumo |
@@ -73,4 +74,5 @@ Falta agregar `registrar_precio_insumo` a `tools.py` (ver "Qué puede responder"
 
 - No hay diccionario de datos: el agente no puede nombrar la materia prima real detrás de `X`, `Y`, `Z` — solo puede describir su comportamiento estadístico (ver `GLOSARIO.md` e `INFORME.md`).
 - La búsqueda web (`buscar_contexto_mercado`) usa un motor gratuito sin API key — resultados razonables para una demo, pero menos robustos que una API de búsqueda dedicada (ver alternativas en `../infra/README.md`).
+- Si algo falla, tanto `telegram_bot.py` como el webhook en Azure le muestran a quien escribe el texto crudo de la excepción (`"Tuve un error procesando tu mensaje: {exc}"`) en vez de un mensaje genérico — pendiente de corregir, ver `../infra/README.md`.
 - Ya desplegado en Azure (Functions + Azure OpenAI, con Telegram como interfaz) — ver `../functions/` y `../infra/README.md`.

@@ -23,7 +23,7 @@ Los datos disponibles son series de precios de mercado de tres materias primas (
 - **Se asume que la relación estructural insumo–equipo observada en los últimos ~13 años se mantiene** en el horizonte de proyección cercano. Es un supuesto necesario para cualquier pronóstico basado en historia, y se señala como riesgo en "Futuros ajustes".
 - **El horizonte de predicción no se fijó de antemano**: se dejó que el backtesting (Fase 3) decidiera hasta dónde el pronóstico aporta valor real, y resultó distinto para cada equipo (ver más abajo).
 - **La arquitectura se diseñó en Azure** porque es el stack de la empresa a la que aplica el candidato — una decisión de contexto, no una exigencia del caso (que permite AWS, Azure o GCP).
-- **La arquitectura se diseñó para costo mínimo** (niveles gratuitos de Azure) y para ser defendible por un perfil junior — se prefirió menos servicios y más simples sobre una arquitectura "enterprise" más compleja, dado el volumen de datos real del caso.
+- **La arquitectura se diseñó para costo mínimo** (niveles gratuitos de Azure) y proporcional al volumen real de datos del caso — se prefirió menos servicios y más simples sobre una arquitectura "enterprise" más compleja de lo que este volumen justifica.
 
 ## Formas para resolver el caso y la opción tomada en esta prueba
 
@@ -37,7 +37,7 @@ En cada etapa hubo más de un camino posible; esta es la opción tomada y por qu
 
 **Horizonte de predicción:** se pudo fijar arbitrariamente (p. ej. 12 meses parejo para ambos equipos). Se optó por dejar que el error histórico de backtesting a 1, 3 y 6 meses determinara hasta dónde el modelo sigue aportando sobre no pronosticar, lo que llevó a horizontes distintos por equipo (ver "Proyección de costos" abajo).
 
-**Arquitectura cloud:** se consideró una arquitectura tipo Data Factory + Databricks/Container Apps + SQL de pago — se descartó por sobredimensionada para el volumen real de datos del caso (miles de filas, unos pocos MB) y por priorizar minimizar costo y mantener la solución explicable por un perfil junior. Se optó por consolidar todo el cómputo en una sola Azure Functions App (Consumption, con cuota gratuita mensual) y usar Azure Cosmos DB en su nivel gratuito (1.000 RU/s y 25GB, sin límite de tiempo).
+**Arquitectura cloud:** se consideró una arquitectura tipo Data Factory + Databricks/Container Apps + SQL de pago — se descartó por sobredimensionada para el volumen real de datos del caso (miles de filas, unos pocos MB) y por priorizar minimizar costo y mantener la solución simple de explicar. Se optó por consolidar todo el cómputo en una sola Azure Functions App (Consumption, con cuota gratuita mensual) y usar Azure Cosmos DB en su nivel gratuito (1.000 RU/s y 25GB, sin límite de tiempo).
 
 ## Resultados del análisis de los datos y los modelos
 
@@ -109,7 +109,7 @@ Salida reproducible: `data/processed/pronostico_equipos.csv`. Detalle completo, 
 - **Despliegue real de la arquitectura en Azure:** ya desplegado — Azure Functions (limpieza, pronóstico, webhook de Telegram), Cosmos DB, Blob Storage y Key Vault, ver `functions/` e `infra/`. Pendiente: implementar `registrar_precio_insumo` (ingesta conversacional de precios, diseñada en `infra/README.md` pero todavía no construida) y su control de acceso por `chat_id`.
 - **Diccionario de datos:** si en algún momento se consigue saber qué materia prima real es `X`/`Y`/`Z` y qué equipo real es `Equipo1`/`Equipo2`, se podría validar la interpretación de negocio de los hallazgos (por ejemplo, confirmar por qué `Y` se comporta como una lista de precios indexada en vez de una cotización de mercado).
 - **Backtesting más amplio:** el actual usa 18 orígenes dentro de ~2 años de prueba; más historia y más orígenes robustecerían la elección de horizonte y método.
-- **Monitoreo y reentrenamiento:** la arquitectura ya contempla un job programado (Azure Functions, Timer trigger) que reentrena antes de cada fase del proyecto; falta instrumentar alertas de *drift* — si la relación estructural insumo-equipo cambia (p. ej. cambio de proveedor), el modelo no lo detectaría solo.
+- **Monitoreo y reentrenamiento:** la arquitectura ya tiene un job programado (Azure Functions, Timer trigger) que reentrena el pronóstico diariamente; falta instrumentar alertas de *drift* — si la relación estructural insumo-equipo cambia (p. ej. cambio de proveedor), el modelo no lo detectaría solo.
 - **Variables adicionales:** si se consiguen fuentes de datos nuevas (mano de obra, logística, tipo de cambio), podrían cerrar parte del R² no explicado (0.10–0.17) que dejaron los modelos de la Fase 2 y 3.
 - **Dashboard opcional (Power BI):** se dejó fuera del diseño de costo mínimo porque compartirlo requiere licencia Pro de pago; la API de resultados ya prevista en la arquitectura lo soportaría si se decide agregarlo más adelante.
 

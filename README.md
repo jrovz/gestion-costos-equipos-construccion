@@ -17,6 +17,8 @@ Una constructora no puede anticipar el costo de dos equipos críticos (`Equipo1`
 - [x] **Arquitectura en Azure**: diseñada para costo mínimo (~$0/mes salvo el modelo de lenguaje) y **desplegada de verdad** — Azure Functions (limpieza, pronóstico y webhook de Telegram), Cosmos DB, Blob Storage y Key Vault.
 - [ ] **Ingesta conversacional de precios** (`registrar_precio_insumo`): diseñada en `infra/README.md`, todavía no implementada en `tools.py`; falta además decidir el control de acceso por `chat_id`.
 
+Limitaciones conocidas del despliegue actual (excepciones crudas mostradas al usuario, sin validación del `secret_token` de Telegram, historial de conversaciones sin límite, sin métricas de uso) — detalle en la sección correspondiente de [`infra/README.md`](infra/README.md).
+
 ## Estructura del repositorio
 
 ```
@@ -44,8 +46,7 @@ Una constructora no puede anticipar el costo de dos equipos críticos (`Equipo1`
 | [`data/README.md`](data/README.md) | Qué hace cada notebook y qué genera cada archivo de `data/processed/` |
 | [`app/README.md`](app/README.md) | Cómo correr el agente, qué puede responder, IA convencional vs. agente aplicado a este proyecto |
 | [`infra/README.md`](infra/README.md) | Arquitectura en Azure: componentes, por qué cada decisión, costo estimado, qué queda pendiente |
-| `Gestión de Costos de Equipos — Presentación.pptx` | Deck original de 12 diapositivas para evaluador técnico |
-| `Gestión de Costos de Equipos — Presentación técnica (mejorada).pptx` | Versión ampliada (15 diapositivas) con el paso a paso de la metodología y énfasis en los métodos de machine learning |
+| `Gestión de Costos de Equipos — Presentación técnica (mejorada).pptx` | Deck técnico (15 diapositivas) con el paso a paso de la metodología y énfasis en los métodos de machine learning |
 | `Gestión de Costos de Equipos — Presentación para cliente.pptx` | Versión en lenguaje simple, sin jerga, para quien va a usar el bot en la constructora |
 
 ## Cómo correrlo
